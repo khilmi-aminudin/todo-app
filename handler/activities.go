@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -61,7 +60,6 @@ func (h *activitiesHandler) Create(ctx *gin.Context) {
 func (h *activitiesHandler) Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 
-	fmt.Println("PARAM ID :", paramID)
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.WebResponse{

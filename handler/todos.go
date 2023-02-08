@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -61,7 +60,6 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 func (h *todosHandler) Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 
-	fmt.Println("PARAM ID :", paramID)
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.WebResponse{
@@ -154,7 +152,7 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
-		Message: "Success Update",
+		Message: "Success",
 		Data:    todos,
 	})
 }

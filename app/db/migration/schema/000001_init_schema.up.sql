@@ -20,4 +20,4 @@ CREATE INDEX activities_index_0 ON activities (id);
 
 CREATE INDEX todos_index_1 ON todos (id);
 
-ALTER TABLE todos ADD FOREIGN KEY (activity_group_id) REFERENCES activities (id);
+ALTER TABLE todos ADD FOREIGN KEY (activity_group_id) REFERENCES activities (id) ON DELETE CASCADE;
