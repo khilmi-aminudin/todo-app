@@ -16,6 +16,10 @@ import (
 )
 
 func RunServer() {
+	if os.Getenv("GIN_MODE") == gin.ReleaseMode {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	dbconn := db.NewDB()
 
 	todosRepo := repository.NewTodosRepository(dbconn)
