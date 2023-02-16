@@ -41,7 +41,7 @@ func RunServer() {
 	router.NewTodosRouter(r, todosHandler)
 	router.NewActivitiesRouter(r, activityHandler)
 
-	port := os.Getenv("APP_PORT")
+	port := "3030"
 
 	fmt.Println("App is running on port ", port)
 	if err := r.Run(":" + port); err != nil {
