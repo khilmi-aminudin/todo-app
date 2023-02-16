@@ -16,8 +16,8 @@ func NewDB() *sql.DB {
 		panic("error opening database connection: " + err.Error())
 	}
 
-	db.SetMaxIdleConns(5)
-	db.SetMaxOpenConns(20)
+	db.SetMaxIdleConns(1000)
+	db.SetMaxOpenConns(10000)
 	db.SetConnMaxLifetime(60 * time.Minute)
 	db.SetConnMaxIdleTime(10 * time.Minute)
 

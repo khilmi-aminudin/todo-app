@@ -29,7 +29,7 @@ func NewTodosRepository(db *sql.DB) TodosRepository {
 
 // Create implements TodosRepository
 func (r *todosRepository) Create(ctx context.Context, data model.Todos) (int, error) {
-	query = "INSERT INTO todos (activity_group_id, title, is_active, priority) VALUES (?,?,?,?)"
+	query = "INSERT INTO todos (activity_group_id, title, priority, is_active) VALUES (?,?,?,?)"
 
 	res, err := r.db.ExecContext(ctx, query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority)
 	if err != nil {
@@ -47,7 +47,7 @@ func (r *todosRepository) Create(ctx context.Context, data model.Todos) (int, er
 
 // Delete implements TodosRepository
 func (r *todosRepository) Delete(ctx context.Context, id int) error {
-	query = "DELETE FROM todos WHERE id = ?"
+	query = "DELETE FROM todos WHERE todo_id = ?"
 	res, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (r *todosRepository) Delete(ctx context.Context, id int) error {
 
 // Get implements TodosRepository
 func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) {
-	query = "SELECT id, activity_group_id, title, is_active, priority, created_at, updated_at FROM todos WHERE id = ? LIMIT 1"
+	query = "SELECT todo_id, activity_group_id, title, priority, is_active, created_at, updated_at FROM todos WHERE id = ? LIMIT 1"
 	row := r.db.QueryRowContext(ctx, query, id)
 
 	var data model.Todos
@@ -75,8 +75,8 @@ func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) 
 		&data.ID,
 		&data.ActivityGroupID,
 		&data.Title,
-		&data.IsActive,
 		&data.Priority,
+		&data.IsActive,
 		&data.CreatedAt,
 		&data.UpdatedAt,
 	); err != nil {
@@ -90,7 +90,7 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 	var data []model.Todos
 
 	if len(activityID) > 0 {
-		query = "SELECT * FROM todos WHERE activity_group_id = ? ORDER BY id"
+		query = "SELECT todo_id, activity_group_id, title, priority, is_active, created_at, updated_at  FROM todos WHERE activity_group_id = ? ORDER BY id"
 
 		rows, err := r.db.QueryContext(ctx, query, activityID[0])
 		if err != nil {
@@ -103,8 +103,8 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 				&d.ID,
 				&d.ActivityGroupID,
 				&d.Title,
-				&d.IsActive,
 				&d.Priority,
+				&d.IsActive,
 				&d.CreatedAt,
 				&d.UpdatedAt,
 			)
@@ -112,7 +112,7 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 		}
 
 	} else {
-		query = "SELECT * FROM todos ORDER BY id"
+		query = "SELECT todo_id, activity_group_id, title, priority, is_active, created_at, updated_at FROM todos ORDER BY id"
 		rows, err := r.db.QueryContext(ctx, query)
 		if err != nil {
 			return nil, err
@@ -124,8 +124,8 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 				&d.ID,
 				&d.ActivityGroupID,
 				&d.Title,
-				&d.IsActive,
 				&d.Priority,
+				&d.IsActive,
 				&d.CreatedAt,
 				&d.UpdatedAt,
 			)
@@ -137,7 +137,7 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 
 // Update implements TodosRepository
 func (r *todosRepository) Update(ctx context.Context, data model.Todos) error {
-	query = "UPDATE todos SET activity_group_id = ?, title = ?, is_active = ?, priority = ?, updated_at = ? WHERE id = ?"
+	query = "UPDATE todos SET activity_group_id = ?, title = ?, is_active = ?, priority = ?, updated_at = ? WHERE todo_id = ?"
 
 	res, err := r.db.ExecContext(ctx, query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.UpdatedAt, data.ID)
 	if err != nil {

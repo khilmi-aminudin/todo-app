@@ -49,7 +49,7 @@ func (r *activitiesRepository) Create(ctx context.Context, data model.Activities
 
 // Delete implements ActivitiesRepository
 func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
-	query = "DELETE FROM activities WHERE id = ?"
+	query = "DELETE FROM activities WHERE activity_id = ?"
 	res, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
 
 // Get implements ActivitiesRepository
 func (r *activitiesRepository) Get(ctx context.Context, id int) (model.Activities, error) {
-	query = "SELECT id, title, email, created_at, updated_at FROM activities WHERE id = ? LIMIT 1"
+	query = "SELECT activity_id, title, email, created_at, updated_at FROM activities WHERE activity_id = ? LIMIT 1"
 	row := r.db.QueryRowContext(ctx, query, id)
 
 	var data model.Activities
@@ -88,7 +88,7 @@ func (r *activitiesRepository) Get(ctx context.Context, id int) (model.Activitie
 // GetAll implements ActivitiesRepository
 func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, error) {
 	var data []model.Activities
-	query = "SELECT * FROM activities ORDER BY id"
+	query = "SELECT activity_id, title, email, created_at, updated_at FROM activities ORDER BY activity_id"
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, 
 
 // Update implements ActivitiesRepository
 func (r *activitiesRepository) Update(ctx context.Context, data model.Activities) error {
-	query = "UPDATE activities SET title = ?, email = ?, updated_at = ? WHERE id = ?"
+	query = "UPDATE activities SET title = ?, email = ?, updated_at = ? WHERE activity_id = ?"
 
 	res, err := r.db.ExecContext(ctx, query, data.Title, data.Email, data.UpdatedAt, data.ID)
 	if err != nil {
