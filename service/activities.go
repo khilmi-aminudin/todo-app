@@ -95,7 +95,7 @@ func (s *activitiesService) Update(ctx context.Context, data model.Activities) e
 	}
 
 	if data.Title == "" && data.Email == "" {
-		return errors.New("body cannot be empty")
+		return errors.New("title cannot be null")
 	}
 
 	if data.Title == "" {

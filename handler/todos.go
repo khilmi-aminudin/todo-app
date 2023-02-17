@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -71,7 +70,7 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 		return
 	}
 	if err := h.todosService.Delete(ctx, id); err != nil {
-		if err == sql.ErrNoRows {
+		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
@@ -107,7 +106,7 @@ func (h *todosHandler) Get(ctx *gin.Context) {
 
 	data, err := h.todosService.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Todo with ID %d Not Found", id),

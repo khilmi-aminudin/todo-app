@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -72,7 +71,7 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 	}
 
 	if err := h.activitiesService.Delete(ctx, id); err != nil {
-		if err == sql.ErrNoRows {
+		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
@@ -109,7 +108,7 @@ func (h *activitiesHandler) Get(ctx *gin.Context) {
 
 	data, err := h.activitiesService.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
@@ -174,7 +173,7 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 
 	request.ID = id
 	if err := h.activitiesService.Update(ctx, request); err != nil {
-		if err == sql.ErrNoRows {
+		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
