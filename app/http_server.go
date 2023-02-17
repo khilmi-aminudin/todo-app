@@ -22,6 +22,8 @@ func RunServer() {
 
 	dbconn := db.NewDB()
 
+	dbconn.AutoMigrate(&model.Activities{}, &model.Todos{})
+
 	todosRepo := repository.NewTodosRepository(dbconn)
 	todosService := service.NewTodosService(todosRepo)
 	todosHandler := handler.NewTodosHandler(todosService)
