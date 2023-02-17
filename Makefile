@@ -14,4 +14,7 @@ rundb:
 	docker start todo-mysql
 
 build:
-	docker build -t todo-app .
+	docker build -t todo-app . && docker tag todo-app khilmiaminudin/todo-app
+
+push:
+	docker push khilmiaminudin/todo-app
