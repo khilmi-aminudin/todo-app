@@ -64,9 +64,6 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 func (s *todosService) Delete(ctx context.Context, id int) error {
 	todos, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
-		if err.Error() == "record not found" {
-			return fmt.Errorf("todo with id %d not found", id)
-		}
 		return err
 	}
 
@@ -109,9 +106,6 @@ func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.T
 func (s *todosService) Update(ctx context.Context, data model.Todos) error {
 	todos, err := s.todosRespository.Get(ctx, data.ID)
 	if err != nil {
-		if err.Error() == "record not found" {
-			return fmt.Errorf("todo with id %d not found", data.ID)
-		}
 		return err
 	}
 

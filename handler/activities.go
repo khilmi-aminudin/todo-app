@@ -52,7 +52,7 @@ func (h *activitiesHandler) Create(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, model.WebResponse{
 		Status:  "Success",
-		Message: "Success Created",
+		Message: "Success",
 		Data:    data,
 	})
 }
@@ -88,8 +88,7 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":  "Success",
-		"message": "Success Delete",
-		// "data":
+		"message": "Success",
 	})
 }
 
