@@ -47,7 +47,13 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		return model.Todos{}, err
 	}
 
-	return todos, nil
+	todo, err := s.todosRespository.Get(ctx, todos.ID)
+
+	if err != nil {
+		return model.Todos{}, err
+	}
+
+	return todo, nil
 }
 
 // Delete implements TodosService

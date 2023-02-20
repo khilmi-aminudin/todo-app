@@ -17,7 +17,7 @@ type Todos struct {
 	ActivityGroupID int        `json:"activity_group_id"`
 	Activities      Activities `gorm:"foreignKey:ActivityGroupID" json:"-"`
 	IsActive        bool       `json:"is_active" gorm:"default:true"`
-	Priority        string     `json:"priority"`
+	Priority        string     `json:"priority" gorm:"default:very-high`
 	CreatedAt       time.Time  `json:"created_at" gorm:"created_at;type:timestamp;not null;default:CURRENT_TIMESTAMP"`
 	UpdatedAt       time.Time  `json:"updated_at" gorm:"updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"`
 }
