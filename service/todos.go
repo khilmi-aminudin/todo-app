@@ -41,19 +41,17 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		data.Priority = model.PriorityVeryHigh
 	}
 
+	if !data.IsActive {
+		data.IsActive = true
+	}
+
 	todos, err := s.todosRespository.Create(ctx, data)
 
 	if err != nil {
 		return model.Todos{}, err
 	}
 
-	todo, err := s.todosRespository.Get(ctx, todos.ID)
-
-	if err != nil {
-		return model.Todos{}, err
-	}
-
-	return todo, nil
+	return todos, nil
 }
 
 // Delete implements TodosService
