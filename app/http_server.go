@@ -22,6 +22,8 @@ func RunServer() {
 
 	dbconn := db.NewDB()
 
+	dbconn.AutoMigrate(&model.Activities{}, &model.Todos{})
+
 	todosRepo := repository.NewTodosRepository(dbconn)
 	todosService := service.NewTodosService(todosRepo)
 	todosHandler := handler.NewTodosHandler(todosService)
@@ -41,7 +43,7 @@ func RunServer() {
 	router.NewTodosRouter(r, todosHandler)
 	router.NewActivitiesRouter(r, activityHandler)
 
-	port := os.Getenv("APP_PORT")
+	port := "3030"
 
 	fmt.Println("App is running on port ", port)
 	if err := r.Run(":" + port); err != nil {

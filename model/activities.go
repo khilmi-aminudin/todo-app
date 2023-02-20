@@ -1,9 +1,11 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type Activities struct {
-	ID        int       `json:"id"`
+	ID        int       `json:"id" gorm:"primaryKey"`
 	Title     string    `json:"title"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`

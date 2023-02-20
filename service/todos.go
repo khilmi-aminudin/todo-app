@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
@@ -37,7 +36,7 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 	}
 
 	if data.Title == "" {
-		return model.Todos{}, errors.New("title cannot be empty")
+		return model.Todos{}, errors.New("title cannot be null")
 	}
 
 	if len(data.Title) < 3 {
@@ -65,9 +64,6 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 func (s *todosService) Delete(ctx context.Context, id int) error {
 	todos, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return fmt.Errorf("todo with id %d not found", id)
-		}
 		return err
 	}
 
@@ -86,14 +82,11 @@ func (s *todosService) Delete(ctx context.Context, id int) error {
 func (s *todosService) Get(ctx context.Context, id int) (model.Todos, error) {
 	data, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return model.Todos{}, fmt.Errorf("todo with id %d not found", id)
-		}
 		return model.Todos{}, err
 	}
 
 	if (data == model.Todos{}) {
-		return model.Todos{}, fmt.Errorf("todo with id %d not found", id)
+		return model.Todos{}, fmt.Errorf("Todo with ID %d Not Found", id)
 	}
 
 	return data, nil
@@ -113,9 +106,6 @@ func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.T
 func (s *todosService) Update(ctx context.Context, data model.Todos) error {
 	todos, err := s.todosRespository.Get(ctx, data.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return fmt.Errorf("todo with id %d not found", data.ID)
-		}
 		return err
 	}
 

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
@@ -53,16 +52,9 @@ func (s *activitiesService) Create(ctx context.Context, data model.Activities) (
 
 // Delete implements ActivitiesService
 func (s *activitiesService) Delete(ctx context.Context, id int) error {
-	activity, err := s.activitiesRespository.Get(ctx, id)
+	_, err := s.activitiesRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return fmt.Errorf("activity with id %d not found", id)
-		}
 		return err
-	}
-
-	if (activity == model.Activities{}) {
-		return fmt.Errorf("activity with id %d not found", id)
 	}
 
 	if err := s.activitiesRespository.Delete(ctx, id); err != nil {
@@ -76,14 +68,7 @@ func (s *activitiesService) Delete(ctx context.Context, id int) error {
 func (s *activitiesService) Get(ctx context.Context, id int) (model.Activities, error) {
 	data, err := s.activitiesRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return model.Activities{}, fmt.Errorf("activity with id %d not found", id)
-		}
 		return model.Activities{}, err
-	}
-
-	if (data == model.Activities{}) {
-		return model.Activities{}, fmt.Errorf("activity with id %d not found", id)
 	}
 
 	return data, nil
@@ -102,9 +87,6 @@ func (s *activitiesService) GetAll(ctx context.Context) ([]model.Activities, err
 func (s *activitiesService) Update(ctx context.Context, data model.Activities) error {
 	activity, err := s.activitiesRespository.Get(ctx, data.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return fmt.Errorf("activity with id %d not found", data.ID)
-		}
 		return err
 	}
 
@@ -113,7 +95,7 @@ func (s *activitiesService) Update(ctx context.Context, data model.Activities) e
 	}
 
 	if data.Title == "" && data.Email == "" {
-		return errors.New("body cannot be empty")
+		return errors.New("title cannot be null")
 	}
 
 	if data.Title == "" {
