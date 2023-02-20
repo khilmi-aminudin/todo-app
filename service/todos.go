@@ -34,7 +34,7 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		return model.Todos{}, errors.New("title cannot be null")
 	}
 	if data.ActivityGroupID <= 0 {
-		return model.Todos{}, errors.New("invalid activity_group_id")
+		return model.Todos{}, errors.New("activity_group_id cannot be null")
 	}
 
 	if data.Priority == "" {

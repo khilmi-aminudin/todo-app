@@ -182,12 +182,10 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 
 	request.ID = id
 	if err := h.activitiesService.Update(ctx, request); err != nil {
-		fmt.Println("CALLED")
 		if err.Error() == "record not found" {
-			fmt.Println("CALLED")
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
 			})
 			return
 		}
