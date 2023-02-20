@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -29,6 +30,11 @@ func NewDB() *sql.DB {
 	if err != nil {
 		panic("error opening database connection: " + err.Error())
 	}
+
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(100)
+	db.SetConnMaxIdleTime(5 * time.Minute)
+	db.SetConnMaxLifetime(60 * time.Minute)
 
 	return db
 }
