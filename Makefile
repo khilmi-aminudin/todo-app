@@ -1,4 +1,4 @@
-rundev:
+run:
 	go run main.go
 
 mysql:

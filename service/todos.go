@@ -39,25 +39,17 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		return model.Todos{}, errors.New("title cannot be null")
 	}
 
-	if len(data.Title) < 3 {
-		return model.Todos{}, errors.New("title length must be greater than 2")
-	}
-
 	if data.Priority == "" {
-		data.Priority = model.PriorityNormal
+		data.Priority = model.PriorityVeryHigh
 	}
 
-	id, err := s.todosRespository.Create(ctx, data)
+	todos, err := s.todosRespository.Create(ctx, data)
 
 	if err != nil {
 		return model.Todos{}, err
 	}
 
-	data.ID = id
-	data.CreatedAt = time.Now()
-	data.UpdatedAt = time.Now()
-
-	return data, nil
+	return todos, nil
 }
 
 // Delete implements TodosService

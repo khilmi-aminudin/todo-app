@@ -20,15 +20,16 @@ func RunServer() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	dbconn := db.NewDB()
+	dbGorm := db.NewGormDB()
+	dbGorm.AutoMigrate(&model.Activities{}, &model.Todos{})
 
-	dbconn.AutoMigrate(&model.Activities{}, &model.Todos{})
+	db := db.NewDB()
 
-	todosRepo := repository.NewTodosRepository(dbconn)
+	todosRepo := repository.NewTodosRepository(db)
 	todosService := service.NewTodosService(todosRepo)
 	todosHandler := handler.NewTodosHandler(todosService)
 
-	activityRepo := repository.NewActivitiesRepository(dbconn)
+	activityRepo := repository.NewActivitiesRepository(db)
 	activityService := service.NewActivitiesService(activityRepo)
 	activityHandler := handler.NewActivitiesHandler(activityService)
 
