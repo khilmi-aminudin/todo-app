@@ -88,6 +88,7 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
+		Data:    model.EmptyStruct{},
 	})
 }
 
@@ -150,10 +151,18 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 			return
 		}
 
+		if todos != nil {
+			ctx.JSON(http.StatusOK, model.WebResponse{
+				Status:  "Success",
+				Message: "Success",
+				Data:    todos,
+			})
+			return
+		}
 		ctx.JSON(http.StatusOK, model.WebResponse{
 			Status:  "Success",
 			Message: "Success",
-			Data:    todos,
+			Data:    []model.EmptyStruct{},
 		})
 		return
 	}

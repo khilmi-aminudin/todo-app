@@ -86,9 +86,10 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":  "Success",
-		"message": "Success",
+	ctx.JSON(http.StatusOK, model.WebResponse{
+		Status:  "Success",
+		Message: "Success",
+		Data:    model.EmptyStruct{},
 	})
 }
 

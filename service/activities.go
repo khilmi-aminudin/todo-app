@@ -98,12 +98,8 @@ func (s *activitiesService) Update(ctx context.Context, data model.Activities) e
 		return errors.New("title cannot be null")
 	}
 
-	if data.Title == "" {
-		return errors.New("title cannt be empty")
-	}
-
 	if data.Email == "" {
-		return errors.New("email cannt be empty")
+		data.Email = activity.Email
 	}
 
 	data.UpdatedAt = time.Now()
