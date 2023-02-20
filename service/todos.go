@@ -123,10 +123,6 @@ func (s *todosService) Update(ctx context.Context, data model.Todos) error {
 		data.Priority = todos.Priority
 	}
 
-	if data.IsActive == nil {
-		data.IsActive = todos.IsActive
-	}
-
 	if err := s.todosRespository.Update(ctx, data); err != nil {
 		return err
 	}
