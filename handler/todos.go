@@ -52,7 +52,7 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, model.WebResponse{
 		Status:  "Success",
-		Message: "Success Created",
+		Message: "Success",
 		Data:    data,
 	})
 }
@@ -152,7 +152,7 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, model.WebResponse{
 			Status:  "Success",
-			Message: "Success Update",
+			Message: "Success",
 			Data:    todos,
 		})
 		return
@@ -217,7 +217,7 @@ func (h *todosHandler) Update(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
-		Message: "Success Update",
+		Message: "Success",
 		Data:    todo,
 	})
 }
