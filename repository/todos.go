@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 )
@@ -34,8 +35,8 @@ func NewTodosRepository(db *sql.DB) TodosRepository {
 
 // Create implements TodosRepository
 func (r *todosRepository) Create(ctx context.Context, data model.Todos) (model.Todos, error) {
-	model.Query = "insert into todos (activity_group_id, title, is_active, priority, created_at, updated_at) values (?,?,?,?,?);"
-	res, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.CreatedAt, data.UpdatedAt)
+	model.Query = "insert into todos (activity_group_id, title, is_active, priority) values (?,?,?,?);"
+	res, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority)
 	if err != nil {
 		return model.Todos{}, err
 	}
@@ -44,6 +45,8 @@ func (r *todosRepository) Create(ctx context.Context, data model.Todos) (model.T
 		return model.Todos{}, err
 	}
 	data.ID = int(id)
+	data.CreatedAt = time.Now()
+	data.UpdatedAt = time.Now()
 	return data, nil
 }
 
@@ -114,8 +117,8 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 
 // Update implements TodosRepository
 func (r *todosRepository) Update(ctx context.Context, data model.Todos) error {
-	model.Query = "update todos set activity_group_id = ?, title = ?, is_active = ?, priority = ?, updated_at = ? where id = ?;"
-	_, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.UpdatedAt)
+	model.Query = "update todos set activity_group_id = ?, title = ?, is_active = ?, priority = ? where id = ?;"
+	_, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.ID)
 	if err != nil {
 		return err
 	}

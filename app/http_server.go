@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -21,7 +22,10 @@ func RunServer() {
 	}
 
 	dbGorm := db.NewGormDB()
-	dbGorm.AutoMigrate(&model.Activities{}, &model.Todos{})
+	err := dbGorm.AutoMigrate(&model.Activities{}, &model.Todos{})
+	if err != nil {
+		log.Fatal("error migrating models : ", err)
+	}
 
 	db := db.NewDB()
 

@@ -3,12 +3,13 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 )
 
 type ActivitiesRepository interface {
-	Create(ctx context.Context, data model.Activities) (int, error)
+	Create(ctx context.Context, data model.Activities) (model.Activities, error)
 	Update(ctx context.Context, data model.Activities) error
 	Delete(ctx context.Context, id int) error
 	Get(ctx context.Context, id int) (model.Activities, error)
@@ -32,19 +33,20 @@ func NewActivitiesRepository(db *sql.DB) ActivitiesRepository {
 }
 
 // Create implements ActivitiesRepository
-func (r *activitiesRepository) Create(ctx context.Context, data model.Activities) (int, error) {
-	model.Query = "insert into activities (title, email) values (?, ?);"
+func (r *activitiesRepository) Create(ctx context.Context, data model.Activities) (model.Activities, error) {
+	fmt.Println("TIME NOW :", data.CreatedAt)
+	model.Query = "insert into activities (title, email) values (?,?);"
 
 	res, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email)
 	if err != nil {
-		return 0, err
+		return model.Activities{}, err
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
-		return 0, err
+		return model.Activities{}, err
 	}
 	data.ID = int(id)
-	return data.ID, nil
+	return data, nil
 }
 
 // Delete implements ActivitiesRepository
@@ -61,7 +63,7 @@ func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
 func (r *activitiesRepository) Get(ctx context.Context, id int) (model.Activities, error) {
 	var m model.Activities
 	model.Query = "select id, title, email, created_at, updated_at from activities where id = ?;"
-	row := r.db.QueryRowContext(ctx, model.Query)
+	row := r.db.QueryRowContext(ctx, model.Query, id)
 	if err := row.Scan(
 		&m.ID,
 		&m.Title,
@@ -101,8 +103,8 @@ func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, 
 
 // Update implements ActivitiesRepository
 func (r *activitiesRepository) Update(ctx context.Context, data model.Activities) error {
-	model.Query = "update activities set title = ?, email = ?, updated_at = ? where id = ?;"
-	_, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email, data.UpdatedAt, data.ID)
+	model.Query = "update activities set title = ?, email = ? where id = ?;"
+	_, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email, data.ID)
 	if err != nil {
 		return err
 	}

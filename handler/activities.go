@@ -141,6 +141,15 @@ func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
+	if activities == nil {
+		ctx.JSON(http.StatusOK, model.WebResponse{
+			Status:  "Success",
+			Message: "Success",
+			Data:    []model.EmptyStruct{},
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
@@ -173,7 +182,9 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 
 	request.ID = id
 	if err := h.activitiesService.Update(ctx, request); err != nil {
+		fmt.Println("CALLED")
 		if err.Error() == "record not found" {
+			fmt.Println("CALLED")
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
