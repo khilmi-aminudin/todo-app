@@ -2,14 +2,14 @@ package repository
 
 import (
 	"context"
-
-	"gorm.io/gorm"
+	"database/sql"
+	"fmt"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 )
 
 type ActivitiesRepository interface {
-	Create(ctx context.Context, data model.Activities) (int, error)
+	Create(ctx context.Context, data model.Activities) (model.Activities, error)
 	Update(ctx context.Context, data model.Activities) error
 	Delete(ctx context.Context, id int) error
 	Get(ctx context.Context, id int) (model.Activities, error)
@@ -17,34 +17,43 @@ type ActivitiesRepository interface {
 }
 
 type activitiesRepository struct {
-	db *gorm.DB
+	// db *gorm.DB
+	db *sql.DB
 }
 
-func NewActivitiesRepository(db *gorm.DB) ActivitiesRepository {
+//	func NewActivitiesRepository(db *gorm.DB) ActivitiesRepository {
+//		return &activitiesRepository{
+//			db: db,
+//		}
+//	}
+func NewActivitiesRepository(db *sql.DB) ActivitiesRepository {
 	return &activitiesRepository{
 		db: db,
 	}
 }
 
 // Create implements ActivitiesRepository
-func (r *activitiesRepository) Create(ctx context.Context, data model.Activities) (int, error) {
-	if err := r.db.WithContext(ctx).
-		Table("activities").
-		Create(&data).
-		Error; err != nil {
-		return 0, err
+func (r *activitiesRepository) Create(ctx context.Context, data model.Activities) (model.Activities, error) {
+	fmt.Println("TIME NOW :", data.CreatedAt)
+	model.Query = "insert into activities (title, email) values (?,?);"
+
+	res, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email)
+	if err != nil {
+		return model.Activities{}, err
 	}
-	return data.ID, nil
+	id, err := res.LastInsertId()
+	if err != nil {
+		return model.Activities{}, err
+	}
+	data.ID = int(id)
+	return data, nil
 }
 
 // Delete implements ActivitiesRepository
 func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
-	var m model.Activities
-	if err := r.db.WithContext(ctx).
-		Table("activities").
-		Where("id", id).
-		Delete(&m).
-		Error; err != nil {
+	model.Query = "delete from activities where id = ?;"
+	_, err := r.db.ExecContext(ctx, model.Query, id)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -53,35 +62,50 @@ func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
 // Get implements ActivitiesRepository
 func (r *activitiesRepository) Get(ctx context.Context, id int) (model.Activities, error) {
 	var m model.Activities
-	if err := r.db.WithContext(ctx).
-		Table("activities").
-		Where("id", id).
-		First(&m).
-		Error; err != nil {
+	model.Query = "select id, title, email, created_at, updated_at from activities where id = ?;"
+	row := r.db.QueryRowContext(ctx, model.Query, id)
+	if err := row.Scan(
+		&m.ID,
+		&m.Title,
+		&m.Email,
+		&m.CreatedAt,
+		&m.UpdatedAt,
+	); err != nil {
 		return m, err
 	}
+
 	return m, nil
 }
 
 // GetAll implements ActivitiesRepository
 func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, error) {
 	var m []model.Activities
-	if err := r.db.WithContext(ctx).
-		Table("activities").
-		Scan(&m).
-		Error; err != nil {
+	model.Query = "select id, title, email, created_at, updated_at from activities;"
+	rows, err := r.db.QueryContext(ctx, model.Query)
+	if err != nil {
 		return nil, err
+	}
+	for rows.Next() {
+		var d model.Activities
+		if err := rows.Scan(
+			&d.ID,
+			&d.Title,
+			&d.Email,
+			&d.CreatedAt,
+			&d.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		m = append(m, d)
 	}
 	return m, nil
 }
 
 // Update implements ActivitiesRepository
 func (r *activitiesRepository) Update(ctx context.Context, data model.Activities) error {
-	if err := r.db.WithContext(ctx).
-		Table("activities").
-		Where("id", data.ID).
-		Updates(&data).
-		Error; err != nil {
+	model.Query = "update activities set title = ?, email = ? where id = ?;"
+	_, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email, data.ID)
+	if err != nil {
 		return err
 	}
 	return nil

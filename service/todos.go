@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 	"github.com/khilmi-aminudin/todo-app/repository"
@@ -30,40 +30,33 @@ func NewTodosService(todosRespository repository.TodosRepository) TodosService {
 
 // Create implements TodosService
 func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todos, error) {
-
+	if data.Title == "" {
+		return model.Todos{}, errors.New("title cannot be null")
+	}
 	if data.ActivityGroupID <= 0 {
 		return model.Todos{}, errors.New("invalid activity_group_id")
 	}
 
-	if data.Title == "" {
-		return model.Todos{}, errors.New("title cannot be null")
-	}
-
-	if len(data.Title) < 3 {
-		return model.Todos{}, errors.New("title length must be greater than 2")
-	}
-
 	if data.Priority == "" {
-		data.Priority = model.PriorityNormal
+		data.Priority = model.PriorityVeryHigh
 	}
 
-	id, err := s.todosRespository.Create(ctx, data)
+	todos, err := s.todosRespository.Create(ctx, data)
 
 	if err != nil {
 		return model.Todos{}, err
 	}
 
-	data.ID = id
-	data.CreatedAt = time.Now()
-	data.UpdatedAt = time.Now()
-
-	return data, nil
+	return todos, nil
 }
 
 // Delete implements TodosService
 func (s *todosService) Delete(ctx context.Context, id int) error {
 	todos, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New("record not found")
+		}
 		return err
 	}
 
@@ -82,6 +75,9 @@ func (s *todosService) Delete(ctx context.Context, id int) error {
 func (s *todosService) Get(ctx context.Context, id int) (model.Todos, error) {
 	data, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return model.Todos{}, errors.New("record not found")
+		}
 		return model.Todos{}, err
 	}
 
@@ -97,6 +93,9 @@ func (s *todosService) Get(ctx context.Context, id int) (model.Todos, error) {
 func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.Todos, error) {
 	todos, err := s.todosRespository.GetAll(ctx, activityID...)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("record not found")
+		}
 		return nil, err
 	}
 	return todos, nil
@@ -106,26 +105,28 @@ func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.T
 func (s *todosService) Update(ctx context.Context, data model.Todos) error {
 	todos, err := s.todosRespository.Get(ctx, data.ID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New("record not found")
+		}
 		return err
 	}
 
-	if (todos == model.Todos{}) {
-		return fmt.Errorf("todo with id %d not found", data.ID)
-	}
-
 	if data.ActivityGroupID <= 0 {
-		return errors.New("activity_group_id cannt be empty")
+		data.ActivityGroupID = todos.ActivityGroupID
 	}
 
 	if data.Title == "" {
-		return errors.New("titlr cannt be empty")
+		data.Title = todos.Title
 	}
 
 	if data.Priority == "" {
-		return errors.New("priority cannt be empty")
+		data.Priority = todos.Priority
 	}
 
-	data.UpdatedAt = time.Now()
+	if data.IsActive == nil {
+		data.IsActive = todos.IsActive
+	}
+
 	if err := s.todosRespository.Update(ctx, data); err != nil {
 		return err
 	}

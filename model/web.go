@@ -7,3 +7,5 @@ type WebResponse struct {
 }
 
 const ErrConstraint = "1451"
+
+type EmptyStruct struct{}

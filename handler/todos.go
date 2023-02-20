@@ -88,6 +88,7 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
+		Data:    model.EmptyStruct{},
 	})
 }
 
@@ -150,10 +151,18 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 			return
 		}
 
+		if todos != nil {
+			ctx.JSON(http.StatusOK, model.WebResponse{
+				Status:  "Success",
+				Message: "Success",
+				Data:    todos,
+			})
+			return
+		}
 		ctx.JSON(http.StatusOK, model.WebResponse{
 			Status:  "Success",
 			Message: "Success",
-			Data:    todos,
+			Data:    []model.EmptyStruct{},
 		})
 		return
 	}
@@ -167,10 +176,19 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
+	if todos != nil {
+		ctx.JSON(http.StatusOK, model.WebResponse{
+			Status:  "Success",
+			Message: "Success",
+			Data:    todos,
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
-		Data:    todos,
+		Data:    []model.EmptyStruct{},
 	})
 }
 
@@ -199,6 +217,14 @@ func (h *todosHandler) Update(ctx *gin.Context) {
 
 	request.ID = id
 	if err := h.todosService.Update(ctx, request); err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusBadRequest, model.WebResponse{
 			Status:  "Bad Request",
 			Message: err.Error(),
