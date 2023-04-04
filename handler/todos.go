@@ -43,8 +43,8 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 
 	data, err := h.todosService.Create(ctx, request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Internal Server Error",
 			"message": err.Error(),
 		})
 		return
@@ -69,18 +69,11 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 		})
 		return
 	}
-	if err := h.todosService.Delete(ctx, id); err != nil {
-		if err.Error() == "record not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
-			})
-			return
-		}
-
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+	err = h.todosService.Delete(ctx, id)
+	if err.Error() == "record not found" {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": fmt.Sprintf("Todo with ID %d Not Found", id),
 		})
 		return
 	}
@@ -106,18 +99,10 @@ func (h *todosHandler) Get(ctx *gin.Context) {
 	}
 
 	data, err := h.todosService.Get(ctx, id)
-	if err != nil {
-		if err.Error() == "record not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
-			})
-			return
-		}
-
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+	if err.Error() == "record not found" {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": fmt.Sprintf("Todo with ID %d Not Found", id),
 		})
 		return
 	}
@@ -220,7 +205,7 @@ func (h *todosHandler) Update(ctx *gin.Context) {
 		if err.Error() == "record not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
 			})
 			return
 		}

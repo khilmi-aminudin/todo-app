@@ -34,11 +34,15 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		return model.Todos{}, errors.New("title cannot be null")
 	}
 	if data.ActivityGroupID <= 0 {
-		return model.Todos{}, errors.New("invalid activity_group_id")
+		return model.Todos{}, errors.New("activity_group_id cannot be null")
 	}
 
 	if data.Priority == "" {
 		data.Priority = model.PriorityVeryHigh
+	}
+
+	if !data.IsActive {
+		data.IsActive = true
 	}
 
 	todos, err := s.todosRespository.Create(ctx, data)
@@ -121,10 +125,6 @@ func (s *todosService) Update(ctx context.Context, data model.Todos) error {
 
 	if data.Priority == "" {
 		data.Priority = todos.Priority
-	}
-
-	if data.IsActive == nil {
-		data.IsActive = todos.IsActive
 	}
 
 	if err := s.todosRespository.Update(ctx, data); err != nil {

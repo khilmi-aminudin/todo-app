@@ -13,13 +13,13 @@ const (
 
 type Todos struct {
 	ID              int        `json:"id" gorm:"primaryKey"`
+	Title           string     `json:"title"`
 	ActivityGroupID int        `json:"activity_group_id"`
 	Activities      Activities `gorm:"foreignKey:ActivityGroupID" json:"-"`
-	Title           string     `json:"title"`
-	IsActive        *bool      `json:"is_active"`
-	Priority        string     `json:"priority"`
-	CreatedAt       time.Time  `json:"created_at" gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP"`
-	UpdatedAt       time.Time  `json:"updated_at" gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"`
+	IsActive        bool       `json:"is_active" gorm:"default:true"`
+	Priority        string     `json:"priority" gorm:"default:very-high"`
+	CreatedAt       time.Time  `json:"created_at" gorm:"created_at;type:timestamp;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt       time.Time  `json:"updated_at" gorm:"updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"`
 }
 
 var Query string

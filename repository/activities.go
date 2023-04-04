@@ -36,8 +36,8 @@ func NewActivitiesRepository(db *sql.DB) ActivitiesRepository {
 func (r *activitiesRepository) Create(ctx context.Context, data model.Activities) (model.Activities, error) {
 	fmt.Println("TIME NOW :", data.CreatedAt)
 	model.Query = "insert into activities (title, email) values (?,?);"
-
 	res, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email)
+	defer r.db.Close()
 	if err != nil {
 		return model.Activities{}, err
 	}
@@ -53,6 +53,7 @@ func (r *activitiesRepository) Create(ctx context.Context, data model.Activities
 func (r *activitiesRepository) Delete(ctx context.Context, id int) error {
 	model.Query = "delete from activities where id = ?;"
 	_, err := r.db.ExecContext(ctx, model.Query, id)
+	defer r.db.Close()
 	if err != nil {
 		return err
 	}
@@ -64,6 +65,7 @@ func (r *activitiesRepository) Get(ctx context.Context, id int) (model.Activitie
 	var m model.Activities
 	model.Query = "select id, title, email, created_at, updated_at from activities where id = ?;"
 	row := r.db.QueryRowContext(ctx, model.Query, id)
+	defer r.db.Close()
 	if err := row.Scan(
 		&m.ID,
 		&m.Title,
@@ -82,6 +84,7 @@ func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, 
 	var m []model.Activities
 	model.Query = "select id, title, email, created_at, updated_at from activities;"
 	rows, err := r.db.QueryContext(ctx, model.Query)
+	defer r.db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -105,6 +108,7 @@ func (r *activitiesRepository) GetAll(ctx context.Context) ([]model.Activities, 
 func (r *activitiesRepository) Update(ctx context.Context, data model.Activities) error {
 	model.Query = "update activities set title = ?, email = ? where id = ?;"
 	_, err := r.db.ExecContext(ctx, model.Query, data.Title, data.Email, data.ID)
+	defer r.db.Close()
 	if err != nil {
 		return err
 	}
