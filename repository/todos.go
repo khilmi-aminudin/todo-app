@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -63,12 +64,14 @@ func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) 
 func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]model.Todos, error) {
 	var m []model.Todos
 
+	model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos;"
+
 	db := r.db.WithContext(ctx)
 	if len(activityID) > 0 {
-		db = db.Where("activity_group_id = ?", activityID[0])
+		model.Query = fmt.Sprintf("select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos where activity_group_id = %d;", activityID[0])
 	}
 
-	if err := db.Find(&m).Error; err != nil {
+	if err := db.Raw(model.Query).Scan(&m).Error; err != nil {
 		return nil, err
 	}
 
