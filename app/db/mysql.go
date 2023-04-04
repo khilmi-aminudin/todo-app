@@ -32,7 +32,7 @@ func NewDB() *sql.DB {
 	}
 
 	db.SetMaxIdleConns(10)
-	db.SetMaxOpenConns(1000)
+	db.SetMaxOpenConns(10000)
 	db.SetConnMaxIdleTime(5 * time.Minute)
 	db.SetConnMaxLifetime(60 * time.Minute)
 

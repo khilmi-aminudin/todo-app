@@ -70,22 +70,14 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.activitiesService.Delete(ctx, id); err != nil {
-		if err.Error() == "record not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
-			})
-			return
-		}
-
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+	err = h.activitiesService.Delete(ctx, id)
+	if err.Error() == "record not found" {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
 		})
 		return
 	}
-
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
@@ -107,18 +99,11 @@ func (h *activitiesHandler) Get(ctx *gin.Context) {
 	}
 
 	data, err := h.activitiesService.Get(ctx, id)
-	if err != nil {
-		if err.Error() == "record not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
-			})
-			return
-		}
 
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+	if err.Error() == "record not found" {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
 		})
 		return
 	}
@@ -141,19 +126,18 @@ func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	if activities == nil {
+	if activities != nil {
 		ctx.JSON(http.StatusOK, model.WebResponse{
 			Status:  "Success",
 			Message: "Success",
-			Data:    []model.EmptyStruct{},
+			Data:    activities,
 		})
 		return
 	}
-
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
-		Data:    activities,
+		Data:    []model.EmptyStruct{},
 	})
 }
 
@@ -181,18 +165,12 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 	}
 
 	request.ID = id
-	if err := h.activitiesService.Update(ctx, request); err != nil {
-		if err.Error() == "record not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
-			})
-			return
-		}
+	err = h.activitiesService.Update(ctx, request)
 
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+	if err.Error() == "record not found" {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"status":  "Not Found",
+			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
 		})
 		return
 	}
