@@ -69,11 +69,18 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 		})
 		return
 	}
-	err = h.todosService.Delete(ctx, id)
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Todo with ID %d Not Found", id),
+	if err := h.todosService.Delete(ctx, id); err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusBadRequest, model.WebResponse{
+			Status:  "Bad Request",
+			Message: err.Error(),
 		})
 		return
 	}
@@ -99,12 +106,18 @@ func (h *todosHandler) Get(ctx *gin.Context) {
 	}
 
 	data, err := h.todosService.Get(ctx, id)
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Todo with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Internal Server Error",
+			"message": err.Error(),
 		})
-		return
 	}
 
 	ctx.JSON(http.StatusOK, model.WebResponse{

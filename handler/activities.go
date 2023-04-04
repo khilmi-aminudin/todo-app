@@ -71,13 +71,20 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 	}
 
 	err = h.activitiesService.Delete(ctx, id)
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Internal Server Error",
+			"message": err.Error(),
 		})
-		return
 	}
+
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
@@ -100,12 +107,18 @@ func (h *activitiesHandler) Get(ctx *gin.Context) {
 
 	data, err := h.activitiesService.Get(ctx, id)
 
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Internal Server Error",
+			"message": err.Error(),
 		})
-		return
 	}
 
 	ctx.JSON(http.StatusOK, model.WebResponse{
@@ -167,10 +180,17 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 	request.ID = id
 	err = h.activitiesService.Update(ctx, request)
 
-	if err.Error() == "record not found" {
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+			"status":  "Bad Request",
+			"message": err.Error(),
 		})
 		return
 	}

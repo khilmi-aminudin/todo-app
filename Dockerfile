@@ -1,7 +1,7 @@
 FROM golang:1.19.4-alpine AS gobuilder
 WORKDIR /app
 COPY . .
-ENV GIN_MODE=releases
+ENV GIN_MODE=release
 RUN go mod tidy
 RUN go build -o binary main.go
 

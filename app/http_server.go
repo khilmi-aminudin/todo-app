@@ -21,13 +21,11 @@ func RunServer() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	dbGorm := db.NewGormDB()
-	err := dbGorm.AutoMigrate(&model.Activities{}, &model.Todos{})
+	db := db.NewGormDB()
+	err := db.AutoMigrate(&model.Activities{}, &model.Todos{})
 	if err != nil {
 		log.Fatal("error migrating models : ", err)
 	}
-
-	db := db.NewDB()
 
 	todosRepo := repository.NewTodosRepository(db)
 	todosService := service.NewTodosService(todosRepo)
@@ -48,7 +46,7 @@ func RunServer() {
 	router.NewTodosRouter(r, todosHandler)
 	router.NewActivitiesRouter(r, activityHandler)
 
-	port := "3030"
+	port := os.Getenv("APP_PORT")
 
 	fmt.Println("App is running on port ", port)
 	if err := r.Run(":" + port); err != nil {

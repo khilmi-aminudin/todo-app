@@ -2,10 +2,7 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
-	"fmt"
-	"time"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 	"github.com/khilmi-aminudin/todo-app/repository"
@@ -43,10 +40,6 @@ func (s *activitiesService) Create(ctx context.Context, data model.Activities) (
 	if err != nil {
 		return model.Activities{}, err
 	}
-
-	res.CreatedAt = time.Now()
-	res.UpdatedAt = time.Now()
-
 	return res, nil
 }
 
@@ -54,9 +47,6 @@ func (s *activitiesService) Create(ctx context.Context, data model.Activities) (
 func (s *activitiesService) Delete(ctx context.Context, id int) error {
 	_, err := s.activitiesRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("record not found")
-		}
 		return err
 	}
 
@@ -71,9 +61,6 @@ func (s *activitiesService) Delete(ctx context.Context, id int) error {
 func (s *activitiesService) Get(ctx context.Context, id int) (model.Activities, error) {
 	data, err := s.activitiesRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return model.Activities{}, errors.New("record not found")
-		}
 		return model.Activities{}, err
 	}
 
@@ -84,9 +71,6 @@ func (s *activitiesService) Get(ctx context.Context, id int) (model.Activities, 
 func (s *activitiesService) GetAll(ctx context.Context) ([]model.Activities, error) {
 	activities, err := s.activitiesRespository.GetAll(ctx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.New("record not found")
-		}
 		return nil, err
 	}
 	return activities, nil
@@ -94,27 +78,15 @@ func (s *activitiesService) GetAll(ctx context.Context) ([]model.Activities, err
 
 // Update implements ActivitiesService
 func (s *activitiesService) Update(ctx context.Context, data model.Activities) error {
-	activity, err := s.activitiesRespository.Get(ctx, data.ID)
+	_, err := s.activitiesRespository.Get(ctx, data.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("record not found")
-		}
 		return err
-	}
-
-	if (activity == model.Activities{}) {
-		return fmt.Errorf("activity with id %d not found", data.ID)
 	}
 
 	if data.Title == "" && data.Email == "" {
 		return errors.New("title cannot be null")
 	}
 
-	if data.Email == "" {
-		data.Email = activity.Email
-	}
-
-	data.UpdatedAt = time.Now()
 	if err := s.activitiesRespository.Update(ctx, data); err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -41,10 +40,6 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 		data.Priority = model.PriorityVeryHigh
 	}
 
-	if !data.IsActive {
-		data.IsActive = true
-	}
-
 	todos, err := s.todosRespository.Create(ctx, data)
 
 	if err != nil {
@@ -56,16 +51,9 @@ func (s *todosService) Create(ctx context.Context, data model.Todos) (model.Todo
 
 // Delete implements TodosService
 func (s *todosService) Delete(ctx context.Context, id int) error {
-	todos, err := s.todosRespository.Get(ctx, id)
+	_, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("record not found")
-		}
 		return err
-	}
-
-	if (todos == model.Todos{}) {
-		return fmt.Errorf("todo with id %d not found", id)
 	}
 
 	if err := s.todosRespository.Delete(ctx, id); err != nil {
@@ -79,9 +67,6 @@ func (s *todosService) Delete(ctx context.Context, id int) error {
 func (s *todosService) Get(ctx context.Context, id int) (model.Todos, error) {
 	data, err := s.todosRespository.Get(ctx, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return model.Todos{}, errors.New("record not found")
-		}
 		return model.Todos{}, err
 	}
 
@@ -97,9 +82,6 @@ func (s *todosService) Get(ctx context.Context, id int) (model.Todos, error) {
 func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.Todos, error) {
 	todos, err := s.todosRespository.GetAll(ctx, activityID...)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.New("record not found")
-		}
 		return nil, err
 	}
 	return todos, nil
@@ -107,24 +89,9 @@ func (s *todosService) GetAll(ctx context.Context, activityID ...int) ([]model.T
 
 // Update implements TodosService
 func (s *todosService) Update(ctx context.Context, data model.Todos) error {
-	todos, err := s.todosRespository.Get(ctx, data.ID)
+	_, err := s.todosRespository.Get(ctx, data.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("record not found")
-		}
 		return err
-	}
-
-	if data.ActivityGroupID <= 0 {
-		data.ActivityGroupID = todos.ActivityGroupID
-	}
-
-	if data.Title == "" {
-		data.Title = todos.Title
-	}
-
-	if data.Priority == "" {
-		data.Priority = todos.Priority
 	}
 
 	if err := s.todosRespository.Update(ctx, data); err != nil {

@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"time"
+
+	"gorm.io/gorm"
 
 	"github.com/khilmi-aminudin/todo-app/model"
 )
@@ -17,17 +18,10 @@ type TodosRepository interface {
 }
 
 type todosRepository struct {
-	// db *gorm.DB
-	db *sql.DB
+	db *gorm.DB
 }
 
-// func NewTodosRepository(db *gorm.DB) TodosRepository {
-// 	return &todosRepository{
-// 		db: db,
-// 	}
-// }
-
-func NewTodosRepository(db *sql.DB) TodosRepository {
+func NewTodosRepository(db *gorm.DB) TodosRepository {
 	return &todosRepository{
 		db: db,
 	}
@@ -35,28 +29,22 @@ func NewTodosRepository(db *sql.DB) TodosRepository {
 
 // Create implements TodosRepository
 func (r *todosRepository) Create(ctx context.Context, data model.Todos) (model.Todos, error) {
-	model.Query = "insert into todos (activity_group_id, title, is_active, priority) values (?,?,?,?);"
-	res, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority)
-	defer r.db.Close()
-	if err != nil {
+	if err := r.db.
+		WithContext(ctx).
+		Create(&data).
+		Error; err != nil {
 		return model.Todos{}, err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return model.Todos{}, err
-	}
-	data.ID = int(id)
-	data.CreatedAt = time.Now()
-	data.UpdatedAt = time.Now()
+	data.UpdatedAt, data.CreatedAt = time.Now(), time.Now()
 	return data, nil
 }
 
 // Delete implements TodosRepository
 func (r *todosRepository) Delete(ctx context.Context, id int) error {
-	model.Query = "delete from todos where id = ?;"
-	_, err := r.db.ExecContext(ctx, model.Query, id)
-	defer r.db.Close()
-	if err != nil {
+	if err := r.db.
+		WithContext(ctx).
+		Delete(model.Todos{}, id).
+		Error; err != nil {
 		return err
 	}
 	return nil
@@ -64,19 +52,8 @@ func (r *todosRepository) Delete(ctx context.Context, id int) error {
 
 // Get implements TodosRepository
 func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) {
-	model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos where id = ?;"
-	row := r.db.QueryRowContext(ctx, model.Query, id)
-	defer r.db.Close()
 	var m model.Todos
-	if err := row.Scan(
-		&m.ID,
-		&m.ActivityGroupID,
-		&m.Title,
-		&m.IsActive,
-		&m.Priority,
-		&m.CreatedAt,
-		&m.UpdatedAt,
-	); err != nil {
+	if err := r.db.WithContext(ctx).First(&m, id).Error; err != nil {
 		return m, err
 	}
 	return m, nil
@@ -85,35 +62,14 @@ func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) 
 // GetAll implements TodosRepository
 func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]model.Todos, error) {
 	var m []model.Todos
-	var rows *sql.Rows
-	var err error
 
+	db := r.db.WithContext(ctx)
 	if len(activityID) > 0 {
-		model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos where activity_group_id = ?;"
-		rows, err = r.db.QueryContext(ctx, model.Query, activityID[0])
-	} else {
-		model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos;"
-		rows, err = r.db.QueryContext(ctx, model.Query)
-	}
-	defer r.db.Close()
-	if err != nil {
-		return nil, err
+		db = db.Where("activity_group_id = ?", activityID[0])
 	}
 
-	for rows.Next() {
-		var d model.Todos
-		if err := rows.Scan(
-			&d.ID,
-			&d.ActivityGroupID,
-			&d.Title,
-			&d.IsActive,
-			&d.Priority,
-			&d.CreatedAt,
-			&d.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		m = append(m, d)
+	if err := db.Find(&m).Error; err != nil {
+		return nil, err
 	}
 
 	return m, nil
@@ -121,10 +77,12 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 
 // Update implements TodosRepository
 func (r *todosRepository) Update(ctx context.Context, data model.Todos) error {
-	model.Query = "update todos set activity_group_id = ?, title = ?, is_active = ?, priority = ? where id = ?;"
-	_, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.ID)
-	defer r.db.Close()
-	if err != nil {
+	if err := r.db.
+		WithContext(ctx).
+		Model(model.Todos{}).
+		Where("id = ?", data.ID).
+		Updates(data).
+		Error; err != nil {
 		return err
 	}
 	return nil
