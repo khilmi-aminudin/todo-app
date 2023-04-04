@@ -50,6 +50,14 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 			})
 			return
 		}
+
+		if err.Error() == "activity_group_id cannot be null" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "Bad Request",
+				"message": err.Error(),
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "Internal Server Error",
 			"message": err.Error(),
