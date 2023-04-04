@@ -14,7 +14,7 @@ const (
 type Todos struct {
 	ID              int        `json:"id" gorm:"primaryKey"`
 	Title           string     `json:"title"`
-	ActivityGroupID int        `json:"activity_group_id"`
+	ActivityGroupID int        `json:"activity_group_id" binding:"required"`
 	Activities      Activities `gorm:"foreignKey:ActivityGroupID" json:"-"`
 	IsActive        bool       `json:"is_active" gorm:"default:true"`
 	Priority        string     `json:"priority" gorm:"default:very-high"`
