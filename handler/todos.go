@@ -43,6 +43,13 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 
 	data, err := h.todosService.Create(ctx, request)
 	if err != nil {
+		if err.Error() == "title cannot be null" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "Bad Request",
+				"message": err.Error(),
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "Internal Server Error",
 			"message": err.Error(),
