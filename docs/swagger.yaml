@@ -1,0 +1,235 @@
+basePath: /api/v1
+definitions:
+  model.Activities:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.CreateActivityParam:
+    properties:
+      email:
+        type: string
+      title:
+        type: string
+    type: object
+  model.HttpErrorResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.ListActivitiesResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        items:
+          $ref: '#/definitions/model.Activities'
+        type: array
+    type: object
+  model.SingleActivityResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        $ref: '#/definitions/model.Activities'
+    type: object
+  model.WebResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /activity-groups:
+    get:
+      description: get list all of existing activities
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ListActivitiesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      summary: get all activities
+      tags:
+      - activity
+    post:
+      consumes:
+      - application/json
+      description: create an activity for parent of items
+      parameters:
+      - description: Add Activities
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateActivityParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      summary: create an activity
+      tags:
+      - activity
+  /activity-groups/{id}:
+    delete:
+      description: delete single activity
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.WebResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      summary: delete a activity
+      tags:
+      - activity
+    get:
+      description: get single activity
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      summary: get a activity
+      tags:
+      - activity
+    patch:
+      consumes:
+      - application/json
+      description: update an activity for parent of items
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Add Activities
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateActivityParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      summary: update an activity
+      tags:
+      - activity
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

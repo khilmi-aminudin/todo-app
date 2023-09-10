@@ -6,7 +6,7 @@ import (
 	"github.com/khilmi-aminudin/todo-app/handler"
 )
 
-func NewTodosRouter(r *gin.Engine, todoshandler handler.TodosHandler) {
+func NewTodosRouter(r *gin.RouterGroup, todoshandler handler.TodosHandler) {
 	r.POST("/todo-items", todoshandler.Create)
 	r.PATCH("/todo-items/:id", todoshandler.Update)
 	r.DELETE("/todo-items/:id", todoshandler.Delete)
