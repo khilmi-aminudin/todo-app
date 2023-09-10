@@ -73,7 +73,7 @@ func (h *activitiesHandler) Create(ctx *gin.Context) {
 	})
 }
 
-// GetActivity godoc
+// DeleteActivity godoc
 // @Summary      delete a activity
 // @Description  delete single activity
 // @Tags         activity
@@ -202,14 +202,14 @@ func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 	})
 }
 
-// CreateActivity godoc
+// UpdateActivity godoc
 // @Summary      update an activity
 // @Description  update an activity for parent of items
 // @Tags         activity
 // @Accept       json
 // @Produce      json
 // @Param 		 id   path int true "id of activity"
-// @Param		 activity	body		model.CreateActivityParam	true	"Add Activities"
+// @Param		 activity	body		model.CreateActivityParam	true	"Update Activity"
 // @Success      200  {object}  model.SingleActivityResponse
 // @Failure      400  {object}  model.HttpErrorResponse
 // @Failure      404  {object}  model.HttpErrorResponse

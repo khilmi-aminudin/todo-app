@@ -52,7 +52,7 @@ func RunServer() {
 	router.NewTodosRouter(baseRoute, todosHandler)
 	router.NewActivitiesRouter(baseRoute, activityHandler)
 
-	port := "8080"
+	port := os.Getenv("APP_PORT")
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	fmt.Println("App is running on port ", port)
