@@ -20,6 +20,11 @@
     "paths": {
         "/activity-groups": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get list all of existing activities",
                 "produces": [
                     "application/json"
@@ -56,6 +61,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "create an activity for parent of items",
                 "consumes": [
                     "application/json"
@@ -108,6 +118,11 @@
         },
         "/activity-groups/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get single activity",
                 "produces": [
                     "application/json"
@@ -153,6 +168,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "delete single activity",
                 "produces": [
                     "application/json"
@@ -198,6 +218,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "update an activity for parent of items",
                 "consumes": [
                     "application/json"
@@ -257,6 +282,11 @@
         },
         "/todo-items": {
             "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "create an todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -309,6 +339,11 @@
         },
         "/todo-items/{activity_group_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get list all of existing todos",
                 "produces": [
                     "application/json"
@@ -355,6 +390,11 @@
         },
         "/todo-items/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "Get a todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -403,6 +443,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "Delete a todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -451,6 +496,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "update an todo",
                 "consumes": [
                     "application/json"
@@ -688,8 +738,10 @@
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "BearerToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
     "externalDocs": {

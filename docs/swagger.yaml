@@ -153,6 +153,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: get all activities
       tags:
       - activity
@@ -186,6 +188,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: create an activity
       tags:
       - activity
@@ -217,6 +221,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: delete a activity
       tags:
       - activity
@@ -247,6 +253,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: get a activity
       tags:
       - activity
@@ -285,6 +293,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: update an activity
       tags:
       - activity
@@ -319,6 +329,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: create an todo
       tags:
       - todo
@@ -349,6 +361,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: get all todos
       tags:
       - todo
@@ -382,6 +396,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: Delete a todo
       tags:
       - todo
@@ -414,6 +430,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: Get a todo
       tags:
       - todo
@@ -452,10 +470,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
       summary: update an todo
       tags:
       - todo
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  BearerToken:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

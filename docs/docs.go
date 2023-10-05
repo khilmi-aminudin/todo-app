@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/activity-groups": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get list all of existing activities",
                 "produces": [
                     "application/json"
@@ -62,6 +67,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "create an activity for parent of items",
                 "consumes": [
                     "application/json"
@@ -114,6 +124,11 @@ const docTemplate = `{
         },
         "/activity-groups/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get single activity",
                 "produces": [
                     "application/json"
@@ -159,6 +174,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "delete single activity",
                 "produces": [
                     "application/json"
@@ -204,6 +224,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "update an activity for parent of items",
                 "consumes": [
                     "application/json"
@@ -263,6 +288,11 @@ const docTemplate = `{
         },
         "/todo-items": {
             "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "create an todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -315,6 +345,11 @@ const docTemplate = `{
         },
         "/todo-items/{activity_group_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "get list all of existing todos",
                 "produces": [
                     "application/json"
@@ -361,6 +396,11 @@ const docTemplate = `{
         },
         "/todo-items/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "Get a todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -409,6 +449,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "Delete a todo for parent of items",
                 "consumes": [
                     "application/json"
@@ -457,6 +502,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
                 "description": "update an todo",
                 "consumes": [
                     "application/json"
@@ -694,8 +744,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "BearerToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
     "externalDocs": {

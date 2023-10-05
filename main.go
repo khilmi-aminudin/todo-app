@@ -26,15 +26,17 @@ import (
 // @host      localhost:8080
 // @BasePath  /api/v1
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey BearerToken
+// @in header
+// @name Authorization
 
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
 func main() {
 	// programmatically set swagger info
-	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
+	docs.SwaggerInfo.Title = "todo-list app"
+	docs.SwaggerInfo.Description = "this is a simple todo list api"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.BasePath = "/api/v1"

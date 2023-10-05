@@ -41,6 +41,7 @@ func NewTodosHandler(todosService service.TodosService) TodosHandler {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /todo-items [post]
+// @Security BearerToken
 // Create implements TodosHandler
 func (h *todosHandler) Create(ctx *gin.Context) {
 	var request model.Todos
@@ -81,6 +82,7 @@ func (h *todosHandler) Create(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /todo-items/{id} [delete]
+// @Security BearerToken
 // Delete implements TodosHandler
 func (h *todosHandler) Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
@@ -121,6 +123,7 @@ func (h *todosHandler) Delete(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /todo-items/{id} [get]
+// @Security BearerToken
 // Get implements TodosHandler
 func (h *todosHandler) Get(ctx *gin.Context) {
 	paramID := ctx.Param("id")
@@ -170,6 +173,7 @@ func (h *todosHandler) Get(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /todo-items/{activity_group_id} [get]
+// @Security BearerToken
 // GetAll implements TodosHandler
 func (h *todosHandler) GetAll(ctx *gin.Context) {
 	stringActivityID := ctx.Query("activity_group_id")
@@ -229,6 +233,7 @@ func (h *todosHandler) GetAll(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /todo-items/{id} [patch]
+// @Security BearerToken
 // Update implements TodosHandler
 func (h *todosHandler) Update(ctx *gin.Context) {
 	paramID := ctx.Param("id")

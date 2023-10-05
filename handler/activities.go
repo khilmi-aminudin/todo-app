@@ -40,6 +40,7 @@ func NewActivitiesHandler(activitiesService service.ActivitiesService) Activitie
 // @Failure      400  {object}  model.HttpErrorResponse
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
+// @Security BearerToken
 // @Router       /activity-groups [post]
 func (h *activitiesHandler) Create(ctx *gin.Context) {
 	var request model.CreateActivityParam
@@ -84,6 +85,7 @@ func (h *activitiesHandler) Create(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /activity-groups/{id} [delete]
+// @Security BearerToken
 // Delete implements ActivitiesHandler
 func (h *activitiesHandler) Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
@@ -130,6 +132,7 @@ func (h *activitiesHandler) Delete(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /activity-groups/{id} [get]
+// @Security BearerToken
 // Get implements ActivitiesHandler
 func (h *activitiesHandler) Get(ctx *gin.Context) {
 	paramID := ctx.Param("id")
@@ -177,6 +180,7 @@ func (h *activitiesHandler) Get(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /activity-groups [get]
+// @Security BearerToken
 // GetAll implements ActivitiesHandler
 func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 	activities, err := h.activitiesService.GetAll(ctx)
@@ -215,6 +219,7 @@ func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 // @Failure      404  {object}  model.HttpErrorResponse
 // @Failure      500  {object}  model.HttpErrorResponse
 // @Router       /activity-groups/{id} [patch]
+// @Security BearerToken
 // Update implements ActivitiesHandler
 func (h *activitiesHandler) Update(ctx *gin.Context) {
 	paramID := ctx.Param("id")
