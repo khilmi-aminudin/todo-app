@@ -21,12 +21,6 @@ type todosRepository struct {
 	db *sql.DB
 }
 
-// func NewTodosRepository(db *gorm.DB) TodosRepository {
-// 	return &todosRepository{
-// 		db: db,
-// 	}
-// }
-
 func NewTodosRepository(db *sql.DB) TodosRepository {
 	return &todosRepository{
 		db: db,
@@ -37,7 +31,6 @@ func NewTodosRepository(db *sql.DB) TodosRepository {
 func (r *todosRepository) Create(ctx context.Context, data model.Todos) (model.Todos, error) {
 	model.Query = "insert into todos (activity_group_id, title, is_active, priority) values (?,?,?,?);"
 	res, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority)
-	defer r.db.Close()
 	if err != nil {
 		return model.Todos{}, err
 	}
@@ -55,7 +48,6 @@ func (r *todosRepository) Create(ctx context.Context, data model.Todos) (model.T
 func (r *todosRepository) Delete(ctx context.Context, id int) error {
 	model.Query = "delete from todos where id = ?;"
 	_, err := r.db.ExecContext(ctx, model.Query, id)
-	defer r.db.Close()
 	if err != nil {
 		return err
 	}
@@ -66,7 +58,6 @@ func (r *todosRepository) Delete(ctx context.Context, id int) error {
 func (r *todosRepository) Get(ctx context.Context, id int) (model.Todos, error) {
 	model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos where id = ?;"
 	row := r.db.QueryRowContext(ctx, model.Query, id)
-	defer r.db.Close()
 	var m model.Todos
 	if err := row.Scan(
 		&m.ID,
@@ -95,7 +86,6 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 		model.Query = "select id, activity_group_id, title, is_active, priority, created_at, updated_at from todos;"
 		rows, err = r.db.QueryContext(ctx, model.Query)
 	}
-	defer r.db.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +113,6 @@ func (r *todosRepository) GetAll(ctx context.Context, activityID ...int) ([]mode
 func (r *todosRepository) Update(ctx context.Context, data model.Todos) error {
 	model.Query = "update todos set activity_group_id = ?, title = ?, is_active = ?, priority = ? where id = ?;"
 	_, err := r.db.ExecContext(ctx, model.Query, data.ActivityGroupID, data.Title, data.IsActive, data.Priority, data.ID)
-	defer r.db.Close()
 	if err != nil {
 		return err
 	}

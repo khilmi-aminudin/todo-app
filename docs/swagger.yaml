@@ -1,0 +1,483 @@
+basePath: /api/v1
+definitions:
+  model.Activities:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.CreateActivityParam:
+    properties:
+      email:
+        type: string
+      title:
+        type: string
+    type: object
+  model.CreateTodoParam:
+    properties:
+      activity_group_id:
+        type: integer
+      priority:
+        type: string
+      title:
+        type: string
+    required:
+    - activity_group_id
+    type: object
+  model.HttpErrorResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.ListActivitiesResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        items:
+          $ref: '#/definitions/model.Activities'
+        type: array
+    type: object
+  model.ListTodosResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        items:
+          $ref: '#/definitions/model.Todos'
+        type: array
+    type: object
+  model.SingleActivityResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        $ref: '#/definitions/model.Activities'
+    type: object
+  model.SingleTodoResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+      value:
+        $ref: '#/definitions/model.Todos'
+    type: object
+  model.Todos:
+    properties:
+      activity_group_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      priority:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.UpdateTodoParam:
+    properties:
+      activity_group_id:
+        type: integer
+      is_active:
+        type: boolean
+      priority:
+        type: string
+      title:
+        type: string
+    type: object
+  model.WebResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /activity-groups:
+    get:
+      description: get list all of existing activities
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ListActivitiesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: get all activities
+      tags:
+      - activity
+    post:
+      consumes:
+      - application/json
+      description: create an activity for parent of items
+      parameters:
+      - description: Add Activities
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateActivityParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: create an activity
+      tags:
+      - activity
+  /activity-groups/{id}:
+    delete:
+      description: delete single activity
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.WebResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: delete a activity
+      tags:
+      - activity
+    get:
+      description: get single activity
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: get a activity
+      tags:
+      - activity
+    patch:
+      consumes:
+      - application/json
+      description: update an activity for parent of items
+      parameters:
+      - description: id of activity
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Activity
+        in: body
+        name: activity
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateActivityParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleActivityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: update an activity
+      tags:
+      - activity
+  /todo-items:
+    post:
+      consumes:
+      - application/json
+      description: create an todo for parent of items
+      parameters:
+      - description: Add Todo to activity
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTodoParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.SingleTodoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: create an todo
+      tags:
+      - todo
+  /todo-items/{activity_group_id}:
+    get:
+      description: get list all of existing todos
+      parameters:
+      - description: activity_group_id
+        in: path
+        name: activity_group_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ListTodosResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: get all todos
+      tags:
+      - todo
+  /todo-items/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a todo for parent of items
+      parameters:
+      - description: todo id to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.WebResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Delete a todo
+      tags:
+      - todo
+    get:
+      consumes:
+      - application/json
+      description: Get a todo for parent of items
+      parameters:
+      - description: todo id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleTodoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Get a todo
+      tags:
+      - todo
+    patch:
+      consumes:
+      - application/json
+      description: update an todo
+      parameters:
+      - description: id of todo
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Todo Param
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateTodoParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SingleTodoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HttpErrorResponse'
+      security:
+      - BearerToken: []
+      summary: update an todo
+      tags:
+      - todo
+securityDefinitions:
+  BearerToken:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

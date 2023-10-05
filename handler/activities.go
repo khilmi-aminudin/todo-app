@@ -29,69 +29,117 @@ func NewActivitiesHandler(activitiesService service.ActivitiesService) Activitie
 	}
 }
 
-// Create implements ActivitiesHandler
+// CreateActivity godoc
+// @Summary      create an activity
+// @Description  create an activity for parent of items
+// @Tags         activity
+// @Accept       json
+// @Produce      json
+// @Param		 activity	body		model.CreateActivityParam	true	"Add Activities"
+// @Success      201  {object}  model.SingleActivityResponse
+// @Failure      400  {object}  model.HttpErrorResponse
+// @Failure      404  {object}  model.HttpErrorResponse
+// @Failure      500  {object}  model.HttpErrorResponse
+// @Security BearerToken
+// @Router       /activity-groups [post]
 func (h *activitiesHandler) Create(ctx *gin.Context) {
-	var request model.Activities
+	var request model.CreateActivityParam
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+		ctx.JSON(http.StatusBadRequest, model.HttpErrorResponse{
+			Status:  "Bad Request",
+			Message: err.Error(),
 		})
 		return
 	}
 
-	data, err := h.activitiesService.Create(ctx, request)
+	var data = model.Activities{
+		Email: request.Email,
+		Title: request.Title,
+	}
+
+	data, err := h.activitiesService.Create(ctx, data)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": err.Error(),
+		ctx.JSON(http.StatusBadRequest, model.HttpErrorResponse{
+			Status:  "Bad Request",
+			Message: err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, model.WebResponse{
-		Status:  "Success",
+	ctx.JSON(http.StatusCreated, model.SingleActivityResponse{
+		Status:  "Success Created",
 		Message: "Success",
-		Data:    data,
+		Value:   data,
 	})
 }
 
+// DeleteActivity godoc
+// @Summary      delete a activity
+// @Description  delete single activity
+// @Tags         activity
+// @Produce      json
+// @Param 		 id   path int true "id of activity"
+// @Success      200  {object}  model.WebResponse
+// @Failure      400  {object}  model.HttpErrorResponse
+// @Failure      404  {object}  model.HttpErrorResponse
+// @Failure      500  {object}  model.HttpErrorResponse
+// @Router       /activity-groups/{id} [delete]
+// @Security BearerToken
 // Delete implements ActivitiesHandler
 func (h *activitiesHandler) Delete(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "Bad Request",
-			"message": "Invalid id",
+		ctx.JSON(http.StatusBadRequest, model.HttpErrorResponse{
+			Status:  "Bad Request",
+			Message: "Invalid id",
 		})
 		return
 	}
 
 	err = h.activitiesService.Delete(ctx, id)
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, model.HttpErrorResponse{
+				Status:  "Not Found",
+				Message: fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, model.HttpErrorResponse{
+			Status:  "Internal Server Error",
+			Message: err.Error(),
 		})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, model.WebResponse{
 		Status:  "Success",
 		Message: "Success",
-		Data:    model.EmptyStruct{},
 	})
 }
 
+// GetActivity godoc
+// @Summary      get a activity
+// @Description  get single activity
+// @Tags         activity
+// @Produce      json
+// @Param 		 id   path int true "id of activity"
+// @Success      200  {object}  model.SingleActivityResponse
+// @Failure      400  {object}  model.HttpErrorResponse
+// @Failure      404  {object}  model.HttpErrorResponse
+// @Failure      500  {object}  model.HttpErrorResponse
+// @Router       /activity-groups/{id} [get]
+// @Security BearerToken
 // Get implements ActivitiesHandler
 func (h *activitiesHandler) Get(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, model.WebResponse{
+		ctx.JSON(http.StatusBadRequest, model.HttpErrorResponse{
 			Status:  "Bad Request",
 			Message: "Invalid id",
 		})
@@ -100,26 +148,44 @@ func (h *activitiesHandler) Get(ctx *gin.Context) {
 
 	data, err := h.activitiesService.Get(ctx, id)
 
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, model.HttpErrorResponse{
+				Status:  "Not Found",
+				Message: fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, model.HttpErrorResponse{
+			Status:  "Internal Server Error",
+			Message: err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, model.WebResponse{
+	ctx.JSON(http.StatusOK, model.SingleActivityResponse{
 		Status:  "Success",
 		Message: "Success",
-		Data:    data,
+		Value:   data,
 	})
 }
 
+// GetListActivities godoc
+// @Summary      get all activities
+// @Description  get list all of existing activities
+// @Tags         activity
+// @Produce      json
+// @Success      200  {object}  model.ListActivitiesResponse
+// @Failure      400  {object}  model.HttpErrorResponse
+// @Failure      404  {object}  model.HttpErrorResponse
+// @Failure      500  {object}  model.HttpErrorResponse
+// @Router       /activity-groups [get]
+// @Security BearerToken
 // GetAll implements ActivitiesHandler
 func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 	activities, err := h.activitiesService.GetAll(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, model.WebResponse{
+		ctx.JSON(http.StatusBadRequest, model.HttpErrorResponse{
 			Status:  "Bad Request",
 			Message: err.Error(),
 		})
@@ -127,20 +193,33 @@ func (h *activitiesHandler) GetAll(ctx *gin.Context) {
 	}
 
 	if activities != nil {
-		ctx.JSON(http.StatusOK, model.WebResponse{
+		ctx.JSON(http.StatusOK, model.ListActivitiesResponse{
 			Status:  "Success",
 			Message: "Success",
-			Data:    activities,
+			Value:   activities,
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, model.WebResponse{
+	ctx.JSON(http.StatusOK, model.ListActivitiesResponse{
 		Status:  "Success",
 		Message: "Success",
-		Data:    []model.EmptyStruct{},
 	})
 }
 
+// UpdateActivity godoc
+// @Summary      update an activity
+// @Description  update an activity for parent of items
+// @Tags         activity
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path int true "id of activity"
+// @Param		 activity	body		model.CreateActivityParam	true	"Update Activity"
+// @Success      200  {object}  model.SingleActivityResponse
+// @Failure      400  {object}  model.HttpErrorResponse
+// @Failure      404  {object}  model.HttpErrorResponse
+// @Failure      500  {object}  model.HttpErrorResponse
+// @Router       /activity-groups/{id} [patch]
+// @Security BearerToken
 // Update implements ActivitiesHandler
 func (h *activitiesHandler) Update(ctx *gin.Context) {
 	paramID := ctx.Param("id")
@@ -167,10 +246,17 @@ func (h *activitiesHandler) Update(ctx *gin.Context) {
 	request.ID = id
 	err = h.activitiesService.Update(ctx, request)
 
-	if err.Error() == "record not found" {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"status":  "Not Found",
-			"message": fmt.Sprintf("Activity with ID %d Not Found", id),
+	if err != nil {
+		if err.Error() == "record not found" {
+			ctx.JSON(http.StatusNotFound, model.HttpErrorResponse{
+				Status:  "Not Found",
+				Message: fmt.Sprintf("Activity with ID %d Not Found", id),
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, model.HttpErrorResponse{
+			Status:  "Internal Server Error",
+			Message: err.Error(),
 		})
 		return
 	}

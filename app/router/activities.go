@@ -6,7 +6,7 @@ import (
 	"github.com/khilmi-aminudin/todo-app/handler"
 )
 
-func NewActivitiesRouter(r *gin.Engine, activitieshandler handler.ActivitiesHandler) {
+func NewActivitiesRouter(r *gin.RouterGroup, activitieshandler handler.ActivitiesHandler) {
 	r.POST("/activity-groups", activitieshandler.Create)
 	r.PATCH("/activity-groups/:id", activitieshandler.Update)
 	r.DELETE("/activity-groups/:id", activitieshandler.Delete)
