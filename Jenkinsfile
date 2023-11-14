@@ -7,7 +7,7 @@ pipeline {
         stage('check docker engine') {
             steps {
                 sh '''
-                docker -version
+                docker -v
                 '''
             }
         }
@@ -29,7 +29,16 @@ pipeline {
             }
         }
 
-        stage('pree build docker image') {
+        
+        // stage('build microservice presence') {
+        //     steps {
+        //         sh '''
+        //         cd API.Presence && dotnet build -o builds && scp 
+        //         '''
+        //     }
+        // }
+
+        stage('pre build docker image') {
             // when {
             //     branch "fix-*"
             // }
