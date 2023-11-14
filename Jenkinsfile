@@ -4,21 +4,38 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
     }
     stages {
-        stage('Hello') {
+        stage('check docker engine') {
             steps {
                 sh '''
-                java -version
+                docker -version
                 '''
             }
         }
 
-        stage('cat README') {
-            when {
-                branch "fix-*"
-            }
+        stage('check repo path') {
             steps {
                 sh '''
-                cat README.md
+                pwd
+                ls -l
+                '''
+            }
+        }
+
+        stage('build docker image') {
+            steps {
+                sh '''
+                docker build -t khilmi-aminudin/todo-app .
+                '''
+            }
+        }
+
+        stage('pree build docker image') {
+            // when {
+            //     branch "fix-*"
+            // }
+            steps {
+                sh '''
+                echo "build success"
                 '''
             }
         }
